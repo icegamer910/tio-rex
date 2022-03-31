@@ -1,20 +1,27 @@
 var tiorelx, fugindo;
 var terra;
-var imagempiso
-var seivoar
-var nuvemcomrandolice
-var imagemnuvem
-var cactea1
-var cactea2
-var cactea3
-var cactea4
-var cactea5
-var cactea6
-var tentativascomacerto
+var imagempiso;
+var seivoar;
+var nuvemcomrandolice;
+var imagemnuvem;
+var cactea1;
+var cactea2;
+var cactea3;
+var cactea4;
+var cactea5;
+var cactea6;
+var tentativascomacerto;
+var algodao;
+var cacturne;
+var inicio = 0;
+var jogando = 1;
+var derrotado = 2;
+var estado = inicio;
+var descanso;
 
 function preload(){
     fugindo = loadAnimation("trex1.png","trex3.png","trex4.png");
-
+    descanso=loadAnimation("trex1.png");
     imagempiso=loadImage("ground2.png");
     cactea1=loadImage("obstacle1.png");
     cactea2=loadImage("obstacle2.png");
@@ -39,36 +46,64 @@ tentativascomacerto=0
     seivoar.visible=false;
 
     tiorelx = createSprite(100,320,40,100);
+    tiorelx.addAnimation("descanso",descanso);
     tiorelx.addAnimation("fugindo",fugindo);
 
     var aleatorio = Math.round(random(1,100));
     console.log(aleatorio);
+
+    algodao = new Group();
+    cacturne = new Group();
 }
 function draw(){
     background("darkgrey");
+    //console.log(tiorelx.y);
 
-//console.log(tiorelx.y);
+    if(estado === inicio){
+      terra.velocityX=0;
+    }
 
-  if(keyDown("space")&&tiorelx.y>=300){
-
-    tiorelx.velocityY = -20;
+  if(estado === inicio && keyDown("space")){
+    estado = jogando;
   }
-    tiorelx.velocityY = tiorelx.velocityY + 2;
+  else if(estado === jogando){
+    tiorelx.changeAnimation("fugindo",fugindo);
+    if(keyDown("space")&&tiorelx.y>=300){
+
+      tiorelx.velocityY = -28;
+    }
     terra.velocityX=-4;
+    tiorelx.velocityY = tiorelx.velocityY + 2;
 
-  if(terra.x<0){
 
-    terra.x=terra.width/2};
+    if(terra.x<0){
 
+      terra.x=terra.width/2};
+      nuvemrandom();
+      meteoro();
+      tentativascomacerto+=Math.round(frameCount/60);
+      if(cacturne.isTouching(tiorelx)){
+        estado=derrotado;
+
+      }
+      
+  }
+
+  else if(estado === derrotado){
+      terra.velocityX=0;
+      algodao.setVelocityXEach(0);
+      cacturne.setVelocityXEach(0);
+  }
+
+  
+   
     tiorelx.collide(seivoar);
 
-    nuvemrandom();
-    meteoro();
-
+   
     drawSprites();
     textSize(24);
     text("record="+tentativascomacerto,1000,50);
-tentativascomacerto+=Math.round(frameCount/60);
+
 }
 
   function nuvemrandom(){
@@ -82,7 +117,7 @@ tentativascomacerto+=Math.round(frameCount/60);
   tiorelx.depth+=1;
   nuvemcomrandolice.lifetime = 450;
 
-
+  algodao.add(nuvemcomrandolice);
 }
 }
   function meteoro(){
@@ -107,5 +142,6 @@ tentativascomacerto+=Math.round(frameCount/60);
      break;
  }
  cactea.lifetime=450;
+ cacturne.add(cactea);
 }
 } 
