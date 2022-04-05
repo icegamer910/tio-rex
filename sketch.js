@@ -18,6 +18,11 @@ var jogando = 1;
 var derrotado = 2;
 var estado = inicio;
 var descanso;
+var meespetei;
+var fraseperdeu;
+var imagemperdeu;
+var fraserecomecar;
+var imagemvoltei;
 
 function preload(){
     fugindo = loadAnimation("trex1.png","trex3.png","trex4.png");
@@ -29,15 +34,20 @@ function preload(){
     cactea4=loadImage("obstacle4.png");
     cactea5=loadImage("obstacle5.png");
     cactea6=loadImage("obstacle6.png");
+    imagemperdeu=loadImage("gameOver.png");
+    imagemvoltei=loadImage("restart.png");
 
     imagemnuvem=loadImage("cloud.png");
+    meespetei=loadAnimation("trex_collided.png");
 }
 function setup(){
     createCanvas(1200,400);
-tentativascomacerto=0
-    
+    tentativascomacerto=0
+    fraseperdeu=createSprite(600,200);
+    fraseperdeu.addImage(imagemperdeu);
     borda = createEdgeSprites();
-
+    fraserecomecar=createSprite(600,280);
+    fraserecomecar.addImage(imagemvoltei);
     terra=createSprite(400,360,800,40);
     terra.addImage(imagempiso);
     terra.x=terra.width/2
@@ -47,6 +57,7 @@ tentativascomacerto=0
 
     tiorelx = createSprite(100,320,40,100);
     tiorelx.addAnimation("descanso",descanso);
+    tiorelx.addAnimation("machucado",meespetei);
     tiorelx.addAnimation("fugindo",fugindo);
 
     var aleatorio = Math.round(random(1,100));
@@ -54,6 +65,9 @@ tentativascomacerto=0
 
     algodao = new Group();
     cacturne = new Group();
+
+    tiorelx.debug = false;
+    tiorelx.setCollider("circle",0,0,40);
 }
 function draw(){
     background("darkgrey");
@@ -61,6 +75,8 @@ function draw(){
 
     if(estado === inicio){
       terra.velocityX=0;
+      fraseperdeu.visible=false;
+      fraserecomecar.visible=false;
     }
 
   if(estado === inicio && keyDown("space")){
@@ -72,9 +88,10 @@ function draw(){
 
       tiorelx.velocityY = -28;
     }
-    terra.velocityX=-4;
+    terra.velocityX=-8;
     tiorelx.velocityY = tiorelx.velocityY + 2;
-
+    fraseperdeu.visible=false;
+    fraserecomecar.visible=false;
 
     if(terra.x<0){
 
@@ -93,6 +110,12 @@ function draw(){
       terra.velocityX=0;
       algodao.setVelocityXEach(0);
       cacturne.setVelocityXEach(0);
+      tiorelx.changeAnimation("machucado",meespetei);
+      algodao.setLifetimeEach(-12);
+      cacturne.setLifetimeEach(-10);
+      tiorelx.velocityY=0
+      fraseperdeu.visible=true;
+      fraserecomecar.visible=true; 
   }
 
   
@@ -112,7 +135,7 @@ function draw(){
   nuvemcomrandolice=createSprite(1200,200,80,20);
   nuvemcomrandolice.addImage(imagemnuvem);
   nuvemcomrandolice.y=Math.round(random(10,300));
-  nuvemcomrandolice.velocityX=-3;
+  nuvemcomrandolice.velocityX=-6;
   nuvemcomrandolice.depth=tiorelx.depth;
   tiorelx.depth+=1;
   nuvemcomrandolice.lifetime = 450;
@@ -123,7 +146,7 @@ function draw(){
   function meteoro(){
   if(frameCount%120===0){
  var cactea=createSprite(1200,330,20,80);
- cactea.velocityX=-6
+ cactea.velocityX=-12;
  var imagecactea=Math.round(random(1,6))
  switch (imagecactea) {
    case 1:cactea.addImage(cactea1);
