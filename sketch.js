@@ -23,6 +23,9 @@ var fraseperdeu;
 var imagemperdeu;
 var fraserecomecar;
 var imagemvoltei;
+var avisoquepulei;
+var f;
+var salvo;
 
 function preload(){
     fugindo = loadAnimation("trex1.png","trex3.png","trex4.png");
@@ -36,9 +39,12 @@ function preload(){
     cactea6=loadImage("obstacle6.png");
     imagemperdeu=loadImage("gameOver.png");
     imagemvoltei=loadImage("restart.png");
-
+    f=loadSound("die.mp3");
+    salvo=loadSound("checkPoint.mp3");
     imagemnuvem=loadImage("cloud.png");
     meespetei=loadAnimation("trex_collided.png");
+
+    avisoquepulei = loadSound("jump.mp3");    
 }
 function setup(){
     createCanvas(1200,400);
@@ -85,14 +91,16 @@ function draw(){
   else if(estado === jogando){
     tiorelx.changeAnimation("fugindo",fugindo);
     if(keyDown("space")&&tiorelx.y>=300){
-
+      avisoquepulei.play();
       tiorelx.velocityY = -28;
     }
-    terra.velocityX=-8;
+    terra.velocityX=-(8+tentativascomacerto/200);
     tiorelx.velocityY = tiorelx.velocityY + 2;
     fraseperdeu.visible=false;
     fraserecomecar.visible=false;
-
+    if(tentativascomacerto % 500===0&&tentativascomacerto>0){
+      salvo.play();
+    }
     if(terra.x<0){
 
       terra.x=terra.width/2};
@@ -101,7 +109,7 @@ function draw(){
       tentativascomacerto+=Math.round(frameCount/60);
       if(cacturne.isTouching(tiorelx)){
         estado=derrotado;
-
+      f.play();
       }
       
   }
@@ -116,6 +124,7 @@ function draw(){
       tiorelx.velocityY=0
       fraseperdeu.visible=true;
       fraserecomecar.visible=true; 
+
   }
 
   
@@ -146,7 +155,7 @@ function draw(){
   function meteoro(){
   if(frameCount%120===0){
  var cactea=createSprite(1200,330,20,80);
- cactea.velocityX=-12;
+ cactea.velocityX=-(12+tentativascomacerto/200);
  var imagecactea=Math.round(random(1,6))
  switch (imagecactea) {
    case 1:cactea.addImage(cactea1);
