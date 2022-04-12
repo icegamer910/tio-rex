@@ -67,18 +67,22 @@ function setup(){
     tiorelx.addAnimation("fugindo",fugindo);
 
     var aleatorio = Math.round(random(1,100));
-    console.log(aleatorio);
+    //console.log(aleatorio);
 
     algodao = new Group();
     cacturne = new Group();
 
     tiorelx.debug = false;
     tiorelx.setCollider("circle",0,0,40);
+
+   
+    
 }
 function draw(){
     background("darkgrey");
     //console.log(tiorelx.y);
-
+    //var mensagem = "Isso é uma mensagem";
+    //console.log(mensagem);
     if(estado === inicio){
       terra.velocityX=0;
       fraseperdeu.visible=false;
@@ -106,7 +110,7 @@ function draw(){
       terra.x=terra.width/2};
       nuvemrandom();
       meteoro();
-      tentativascomacerto+=Math.round(frameCount/60);
+      tentativascomacerto+=Math.round(frameRate()/60);
       if(cacturne.isTouching(tiorelx)){
         estado=derrotado;
       f.play();
@@ -124,10 +128,12 @@ function draw(){
       tiorelx.velocityY=0
       fraseperdeu.visible=true;
       fraserecomecar.visible=true; 
-
+      if(mousePressedOver(fraserecomecar)){
+        resetar();
+      }
   }
 
-  
+   
    
     tiorelx.collide(seivoar);
 
@@ -138,6 +144,13 @@ function draw(){
 
 }
 
+  function resetar(){
+    estado=jogando;
+   algodao.destroyEach();
+   cacturne.destroyEach();
+   tentativascomacerto=0;
+  }
+
   function nuvemrandom(){
 
   if(frameCount%120===0){
@@ -147,6 +160,10 @@ function draw(){
   nuvemcomrandolice.velocityX=-6;
   nuvemcomrandolice.depth=tiorelx.depth;
   tiorelx.depth+=1;
+  nuvemcomrandolice.depth=fraseperdeu.depth;
+  fraseperdeu.depth+=1;
+  nuvemcomrandolice.depth=fraserecomecar.depth;
+  fraserecomecar.depth+=1;
   nuvemcomrandolice.lifetime = 450;
 
   algodao.add(nuvemcomrandolice);
